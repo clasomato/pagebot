@@ -9,6 +9,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "puppeteer": "^23.7.1"
+    "proxy-chain": "^2.5.4",
+    "puppeteer": "^23.7.1",
+    "socks-proxy-agent": "^8.0.4",
+    "tor-request": "^3.1.0"
   }
 }
