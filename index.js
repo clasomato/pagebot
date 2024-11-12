@@ -1,16 +1,17 @@
 const puppeteer = require('puppeteer');
+const os = require('os');
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function getRandomTimeout() {
-    return getRandomInt(60, 300) * 1000; // 60-300 seconds
+    return getRandomInt(60, 300) * 1000;
 }
 
 async function randomScroll(page) {
     await page.evaluate(async () => {
-        const scrollTimes = Math.floor(Math.random() * 5) + 3; // 3-7 scrolls
+        const scrollTimes = Math.floor(Math.random() * 5) + 3;
         for (let i = 0; i < scrollTimes; i++) {
             const scrollAmount = Math.random() * 500;
             window.scrollBy(0, scrollAmount);
@@ -25,11 +26,26 @@ async function randomScroll(page) {
 async function randomClick() {
     let browser;
     try {
-        browser = await puppeteer.launch({
+        const launchOptions = {
             headless: false,
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
             defaultViewport: null
-        });
+        };
+
+        if (os.platform() === 'linux') {
+            console.log('Linux system detected, using system Chromium');
+            launchOptions.executablePath = '/usr/bin/chromium-browser';
+            launchOptions.args = [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu'
+            ];
+        } else {
+            console.log('Non-Linux system detected, using default Chrome');
+            launchOptions.args = ['--no-sandbox', '--disable-setuid-sandbox'];
+        }
+
+        browser = await puppeteer.launch(launchOptions);
 
         const mainPage = await browser.newPage();
         mainPage.setDefaultTimeout(60000);
@@ -42,7 +58,6 @@ async function randomClick() {
                     timeout: 60000
                 });
 
-                // 1 in 20 chance to click container
                 const shouldClickContainer = Math.random() < 0.05;
 
                 if (shouldClickContainer) {
@@ -58,7 +73,6 @@ async function randomClick() {
                     if (elements.length > 0) {
                         const randomIndex = Math.floor(Math.random() * elements.length);
                         
-                        // Wait for new tab
                         const newPagePromise = new Promise(resolve => 
                             browser.once('targetcreated', target => resolve(target.page()))
                         );
@@ -77,7 +91,6 @@ async function randomClick() {
                             console.log('Scrolling on new page...');
                             await randomScroll(newPage);
                             
-                            // Ensure minimum exploration time (45-60 seconds)
                             const exploreTime = getRandomInt(45000, 60000);
                             console.log(`Exploring page for ${Math.round(exploreTime/1000)} seconds...`);
                             await new Promise(r => setTimeout(r, exploreTime));
@@ -85,7 +98,6 @@ async function randomClick() {
                             console.log('Error during page exploration:', exploreError.message);
                         }
                         
-                        // Close all tabs except main
                         console.log('Closing extra tabs...');
                         const pages = await browser.pages();
                         for (const page of pages) {
@@ -96,19 +108,15 @@ async function randomClick() {
                     }
                 } else {
                     console.log('Rolling for container click... Just scrolling this time.');
-                    // Just scroll the main page
                     await randomScroll(mainPage);
                     
-                    // Wait for a shorter time (15-30 seconds)
                     const scrollTime = getRandomInt(15000, 30000);
                     console.log(`Scrolling main page for ${Math.round(scrollTime/1000)} seconds...`);
                     await new Promise(r => setTimeout(r, scrollTime));
                 }
 
-                // Refresh main page
                 await mainPage.reload({ waitUntil: 'networkidle0' });
                 
-                // Random wait before next iteration
                 const timeout = getRandomTimeout();
                 console.log(`Waiting ${Math.round(timeout/1000)} seconds before next iteration...`);
                 await new Promise(resolve => setTimeout(resolve, timeout));
