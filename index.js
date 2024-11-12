@@ -62,7 +62,7 @@ async function randomClick() {
                     timeout: 60000
                 });
 
-                const shouldClickContainer = Math.random() < 0.05;
+                const shouldClickContainer = Math.random() < 0.15;
 
                 if (shouldClickContainer) {
                     console.log('Rolling for container click... Success!');
