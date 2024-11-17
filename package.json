@@ -1,17 +1,15 @@
 {
-  "name": "learnstuff-click-farmer",
+  "name": "puppeteer-project",
   "version": "1.0.0",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "proxy-chain": "^2.5.4",
-    "puppeteer": "^23.7.1",
-    "socks-proxy-agent": "^8.0.4",
-    "tor-request": "^3.1.0"
+    "puppeteer": "^10.4.0"
+  },
+  "engines": {
+    "node": ">=12.0.0"
   }
 }
