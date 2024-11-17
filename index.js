@@ -33,15 +33,17 @@ async function randomClick() {
         if (os.platform() === 'linux') {
             console.log('Linux system detected, using system Chromium');
             launchOptions.executablePath = '/usr/bin/chromium-browser';
-            launchOptions.headless = 'new';
+            launchOptions.headless = true;
             launchOptions.args = [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
                 '--disable-gpu',
                 '--disable-software-rasterizer',
-                '--disable-features=VizDisplayCompositor',
-                '--headless=new'
+                '--no-zygote',
+                '--single-process',
+                '--disable-extensions',
+                '--window-size=1920,1080'
             ];
         } else {
             console.log('Non-Linux system detected, using default Chrome');
